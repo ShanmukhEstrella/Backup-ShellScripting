@@ -8,8 +8,8 @@ dest_dir="/dest"
 log_file="/root/default_log_file.log"
 
 # Start logging
-start_time=$(date +%s)
 file_count=0
+start_time=$(date +%s)
 pid=$$
 
 contains_vowel() {
@@ -17,9 +17,9 @@ contains_vowel() {
 }
 
 # Find and process all files in the source directory
-find "$source_dir" -type f -print | while read -r src_item; do
+for src_item in $(find "$source_dir" -type f); do
     base_name=$(basename "$src_item")
-    
+
     echo "Checking file: $base_name"  # Debug statement
 
     # Skip files that do not contain vowels
@@ -33,7 +33,7 @@ find "$source_dir" -type f -print | while read -r src_item; do
 
     # Determine the destination file path
     dest_item="$dest_dir/$relative_path"
-    
+
     # Ensure the target directory exists
     target_dir=$(dirname "$dest_item")
     if [ ! -d "$target_dir" ]; then
@@ -53,6 +53,9 @@ done
 
 end_time=$(date +%s)
 runtime=$((end_time - start_time))
+
+# Print the file count
+echo "Total files copied: $file_count"
 
 # Log the required details (or send them to a status file if needed)
 echo "$(date +'%Y-%m-%d %H:%M:%S') PID: $pid Runtime: ${runtime} seconds Files added: $file_count" >> "$log_file"
