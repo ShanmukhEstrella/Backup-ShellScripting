@@ -60,5 +60,5 @@ for src_item in $(find "$source_dir" -type f)
 done
 end_time=$(date +%s)
 runtime=$((end_time - start_time))
-echo "PID:$pid, RUNTIME:$runtime, NUMBER OF FILES COPIED:$file_count" >> "$log_file"
+echo "PID:$pid, RUNTIME in SECONDS:$runtime, NUMBER OF FILES COPIED:$file_count" >> "$log_file"
 echo "Total files copied: $file_count"
