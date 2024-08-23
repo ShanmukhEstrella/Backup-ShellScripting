@@ -1,61 +1,64 @@
 #!/bin/bash
 
-# Set default source and destination directories
-source_dir="/source"
-dest_dir="/dest"
-
-# Set a fixed log file path (no need to specify it as an argument)
-log_file="/root/default_log_file.log"
-
-# Start logging
+# My default path values for variables
+source_dir=""
+dest_dir=""
+log_file="/root/backup_stats.csv"
+while [[ $# -gt 0 ]]
+   do
+    case $1 in
+        --source)
+            source_dir="$2"
+            shift 2
+            ;;
+        --dest)
+            dest_dir="$2"
+            shift 2
+            ;;
+        --log)
+            log_file="$2"
+            shift 2
+            ;;
+        *)
+            echo "Unknown option: $1"
+            exit 1
+            ;;
+    esac
+done
+if [[ -z "$source_dir" || -z "$dest_dir" ]]; then
+    echo "Usage: $0 --source <source_directory> --dest <destination_directory> --log <log_file>" #Mentioned again in readme about the command which should be give to run the script
+    exit 1
+fi
 file_count=0
 start_time=$(date +%s)
 pid=$$
-
-contains_vowel() {
+contains_vowel()
+{
     echo "$1" | grep -iq "[aeiou]"
 }
-
-# Find and process all files in the source directory
-for src_item in $(find "$source_dir" -type f); do
+for src_item in $(find "$source_dir" -type f)
+    do
     base_name=$(basename "$src_item")
-
-    echo "Checking file: $base_name"  # Debug statement
-
-    # Skip files that do not contain vowels
-    if ! contains_vowel "$base_name"; then
-        echo "Skipping $base_name (no vowels)"  # Debug statement
+    if ! contains_vowel "$base_name"
+      then
         continue
     fi
 
-    # Determine the relative path of the file within the source directory
     relative_path=$(realpath --relative-to="$source_dir" "$src_item")
-
-    # Determine the destination file path
     dest_item="$dest_dir/$relative_path"
-
-    # Ensure the target directory exists
     target_dir=$(dirname "$dest_item")
-    if [ ! -d "$target_dir" ]; then
+    if [ ! -d "$target_dir" ]
+    then
         mkdir -p "$target_dir"
     fi
 
-    # Only proceed if the file has been updated or doesn't exist in the destination
-    if [ ! -f "$dest_item" ] || ! diff "$src_item" "$dest_item" > /dev/null; then
-        # Copy the updated file to the destination directory
+    if [ ! -f "$dest_item" ] || [ "$src_item" -nt "$dest_item" ]
+     then
         cp "$src_item" "$dest_item"
-        echo "Copied $src_item to $dest_item"  # Debug statement
         file_count=$((file_count + 1))
-    else
-        echo "No update needed for $src_item"  # Debug statement
     fi
 done
-
 end_time=$(date +%s)
 runtime=$((end_time - start_time))
-
-# Print the file count
+echo "PID:$pid, RUNTIME:$runtime, NUMBER OF FILES COPIED:$file_count" >> "$log_file"
 echo "Total files copied: $file_count"
-
-# Log the required details (or send them to a status file if needed)
-echo "$(date +'%Y-%m-%d %H:%M:%S') PID: $pid Runtime: ${runtime} seconds Files added: $file_count" >> "$log_file"
