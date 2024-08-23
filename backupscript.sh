@@ -30,7 +30,7 @@ if [[ -z "$source_dir" || -z "$dest_dir" ]]; then
     exit 1
 fi
 file_count=0
-start_time=$(date +%s)
+start_time=$(date +%s%3N)
 pid=$$
 contains_vowel()
 {
@@ -58,7 +58,7 @@ for src_item in $(find "$source_dir" -type f)
         file_count=$((file_count + 1))
     fi
 done
-end_time=$(date +%s)
+end_time=$(date +%s%3N)
 runtime=$((end_time - start_time))
-echo "PID:$pid, RUNTIME in SECONDS:$runtime, NUMBER OF FILES COPIED:$file_count" >> "$log_file"
+echo "PID:$pid, RUNTIME:$runtime milliseconds, NUMBER OF FILES COPIED:$file_count" >> "$log_file"
 echo "Total files copied: $file_count"
