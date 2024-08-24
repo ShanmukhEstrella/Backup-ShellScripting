@@ -1,7 +1,8 @@
 # Automated Backup Script
 
-This script performs automated backups from a source directory to a destination directory. It copies files and their corresponding directory structure if the file name contains at least one vowel and updates them in destination directory if there are any changes. The script also logs its activities(PID of back up process, the runtime of the backup process and no.of files copied during that backup process) to a specified file location as given by user. If not given it automatically creates that stats file in the default loacation set at the starting of the script that is:
+- This script performs automated backups from a source directory to a destination directory. It copies files and their corresponding directory structure if the file name contains at least one vowel and updates them in destination directory if there are any changes. The script also logs its activities(PID of back up process, the runtime of the backup process and no.of files copied during that backup process) to a specified file location as given by user. If not given it automatically creates that stats file in the default loacation set at the starting of the script that is:
 "/root/backup_stats.csv"
+- We set the time in horr::minutes::seconds format in crontab file (by opening it from crontab -e command) and give the path of our backup_script.sh file in the opened cronjob and set hour,minute and seconds as 0  so that the cronjob schedules the automated running of the backup_script.sh at our desired time that is 12AM everyday.
 
 # Features
 
